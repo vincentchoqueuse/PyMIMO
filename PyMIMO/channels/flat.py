@@ -4,9 +4,7 @@ from ..core import Processor
 
 class Static_Channel(Processor):
 
-    """Static Channel 
-
-    This class applies a Static Frequency-Flat MIMO Channel.
+    """Implements a Static Frequency-Flat MIMO Channel :math:`\mathbf{H}`.
 
     Parameters
     ----------
@@ -37,9 +35,11 @@ class Static_Channel(Processor):
 
 class Gaussian_Channel(Processor):
 
-    """Static Channel 
+    """Implements a Gaussian Frequency-Flat MIMO Channel with elements
 
-    This class applies a Gaussian Frequency-Flat MIMO Channel.
+    .. math ::
+
+        h_{u,v} \sim \mathcal{N}(0,\sigma_h^2)
     
     Parameters
     ----------
