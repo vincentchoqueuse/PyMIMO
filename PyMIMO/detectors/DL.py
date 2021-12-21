@@ -27,15 +27,7 @@ class FullyConNet(nn.Module):
 
 class DL_Detector(Processor):
 
-    """DL Detector 
-
-    This class performs Deep Learning-based detection in MIMO systems. The DL network is a feedforward network using 5 hidden Dense layers with reLU activation function.
-    The network output is a one-hot encoding vector :math:`\mathbf{u}` of size :math:`N_tM\\times 1` where
-
-    .. math ::
-
-        \\mathbf{u}=\\left[\\begin{array}{c}u_{1}[0]\\\\ \\vdots \\\\ u_{M}[0] \\\\ \\vdots \\\\ u_1[N_t]\\\\ \\vdots \\\\ u_M[N_t]   \\end{array}\\right]
-
+    """Implements the Deep Learning Detector for MIMO Detection with a FullyCon composed of 5 hidden layers.
 
     Parameters
     ----------
@@ -86,6 +78,7 @@ class DL_Detector(Processor):
         return np.transpose(Y.detach().numpy())
 
     def train(self,X,Y,num_epoch=100,batch_size=1000, lr=10**-3,verbose=True):
+        """ trains the fullycon network using supervised data."""
         N = X.shape[1]
         X_input = self.transform_input(X) 
         Y_target = self.one_hot_encoding(Y)
@@ -113,6 +106,7 @@ class DL_Detector(Processor):
                 print('epoch={} : loss={}'.format(epoch,running_loss))
 
     def forward(self,X):
+        """ performs detection using the received samples :math:`\mathbf{Y}`."""
         
         X = self.transform_input(X)
 

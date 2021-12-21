@@ -12,7 +12,7 @@ class Linear_Detector(Processor):
         self.name = name
 
     def set_H(self,H):
-        """ set the channel matrix :math:`H`."""
+        """ set the channel matrix :math:`\mathbf{H}`."""
         self._H = H
 
     def linear_estimator(self,Y):
@@ -28,6 +28,7 @@ class Linear_Detector(Processor):
         return X.astype(int)
 
     def forward(self,Y):
+        """ perform detection using the received samples :math:`\mathbf{Y}`."""
         X0 = self.linear_estimator(Y)
         X = self.projector(X0)
 
@@ -39,22 +40,7 @@ class Linear_Detector(Processor):
 
 class ZF_Detector(Linear_Detector):
 
-    """ZF Detector 
-
-    This class performs Zero-Forcing (ZF) detection in MIMO systems. The ZF detector is composed of 2 steps
-
-    * Linear estimation of the transmitted symbols
-
-    .. math :: 
-
-        \widehat{\mathbf{x}}_0 = \mathbf{H}^{\dagger}\mathbf{y}
-    
-    * Element wise hard thresholding projection into the constellation
-    
-    .. math :: 
-
-        \widehat{x}[n] = \mathcal{P}(\mathbf{x}_0[n]) =\\arg \min_{x\in \mathcal{M}}|x-\widehat{x}_0[n]|^2
-    
+    """Implements the Zero-Forcing (ZF) MIMO detector.
 
     Parameters
     ----------
@@ -71,7 +57,8 @@ class ZF_Detector(Linear_Detector):
         super().__init__(H,alphabet,output=output,name = name)
 
     def linear_estimator(self,Y):
-        """ perform linear estimation using the received samples :math:`\mathbf{Y}`."""
+        """ perform linear estimation
+        """
         H_inv = LA.pinv(self._H)
         X_est = np.matmul(H_inv,Y)
         return X_est
@@ -79,22 +66,19 @@ class ZF_Detector(Linear_Detector):
 
 class MMSE_Detector(Linear_Detector):
     
-    """MMSE Detector 
+    """Implements the MMSE MIMO detector.
 
-    This class performs MMSE detection in MIMO systems. The MMSE detector is composed of 2 steps
+    Parameters
+    ----------
+    H : numpy array
+        Channel matrix
+    sigma2: float
+        noise variance
+    alphabet : numpy array
+        symbol constellation 
+    output : str, optional 
+        specify if the forward function should output the symbols or the index.
 
-    * Linear estimation of the transmitted symbols
-
-    .. math :: 
-
-        \widehat{\mathbf{x}}_0 = \\left(\mathbf{H}^{H}\mathbf{H}+\sigma^2\mathbf{I} \\right)^{-1}\mathbf{H}^H \mathbf{y}
-    
-    * Element wise hard thresholding projection into the constellation
-    
-    .. math :: 
-
-        \widehat{x}[n] = \mathcal{P}(\mathbf{x}_0[n]) =\\arg \min_{x\in \mathcal{M}}|x-\widehat{x}_0[n]|^2
-    
     """
 
     def __init__(self,H,sigma2,alphabet,output="symbols",name = "MMSE"):
@@ -102,7 +86,8 @@ class MMSE_Detector(Linear_Detector):
         self._sigma2 = sigma2
 
     def linear_estimator(self,Y):
-        """ perform linear estimation using the received samples :math:`\mathbf{Y}`."""
+        """ perform linear estimation.
+        """
         N_r,N_t = self._H.shape
         H_H = np.conjugate(np.transpose(self._H))
         A = np.matmul(LA.inv(np.matmul(H_H,self._H)+self._sigma2*np.eye(N_t)),H_H)

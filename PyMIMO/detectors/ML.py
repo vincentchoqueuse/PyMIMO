@@ -6,15 +6,17 @@ from ..core import Processor
 
 class ML_Detector(Processor):
 
-    """ML Detector 
+    """Implements the ML Detector for white Gaussian noise.
 
-    This class performs ML detection in MIMO systems
-    
-    .. math :: 
+    Parameters
+    ----------
+    H : numpy array
+        Channel matrix
+    alphabet : numpy array
+        symbol constellation 
+    output : str, optional 
+        specify if the forward function should output the symbols or the index.
 
-        \widehat{\mathbf{x}} = \\arg \min_{\mathbf{x}\in \mathcal{M}^{N_t}}\|\mathbf{y}-\mathbf{H}\mathbf{x}\|^2
-    
-    where :math:`\mathcal{M}` is the constellation of the transmitted data, and :math:`\mathbf{H}` is the channel matrix.
 
     """
 
@@ -26,7 +28,7 @@ class ML_Detector(Processor):
         self.name = name
 
     def set_H(self,H):
-        """ set the channel matrix :math:`H`."""
+        """ set the channel matrix :math:`\mathbf{H}`."""
         self._H = H
 
     def get_nb_candidates(self):
@@ -35,7 +37,6 @@ class ML_Detector(Processor):
         return len(alphabet)**N_t
 
     def get_candidates(self,alphabet,N_t):
-        """ get all combinaisons of N_t transmitted data belonging to a particular constellation."""
         symbols = np.arange(len(alphabet))
         input_list = [p for p in itertools.product(symbols, repeat=N_t)]
 
@@ -52,7 +53,7 @@ class ML_Detector(Processor):
         return X,S
 
     def forward(self,Y):
-        """ perform detection using the received samples :math:`\mathbf{Y}`."""
+        """ performs detection using the received samples :math:`\mathbf{Y}`."""
         N_r, N_t = self._H.shape
         N_r, N = Y.shape
         X = np.zeros((N_t,N),dtype=int)
