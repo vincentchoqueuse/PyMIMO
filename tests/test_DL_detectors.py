@@ -40,7 +40,7 @@ detector_names = ["ZF","DL"]
 # training DL detector
 print("(DL) Training Stage")
 channel.set_SNR(SNR)
-Y_training = model((N_t,N))
+Y_training = model((N_t,500000))
 X_training = recorder.get_data()
 detector2.train(Y_training,X_training,verbose=False,lr=10**-3)
 
